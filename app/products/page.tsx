@@ -1,4 +1,5 @@
 // app/products/page.tsx
+import Image from "next/image";
 import { getProducts } from '../../lib/shopify'; // Import the function to fetch products
 
 export default async function ProductsPage() {
