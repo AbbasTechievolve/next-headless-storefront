@@ -2,8 +2,8 @@
 export const dynamic = "force-dynamic"; // Prevent prerender errors while testing
 
 export default async function Home() {
-  const url = process.env.SHOPIFY_API_URL;
-  const token = process.env.SHOPIFY_ACCESS_TOKEN;
+  const url = process.env.SHOPIFY_API_URL!;
+  const token = process.env.SHOPIFY_ACCESS_TOKEN!;
 
   // Query for testing
   const query = `
@@ -49,7 +49,7 @@ export default async function Home() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Shopify API Test</h1>
+      <h1>Shopify API Test {token}-{url}</h1>
 
       <h2>Environment Check</h2>
       <pre>{JSON.stringify({
