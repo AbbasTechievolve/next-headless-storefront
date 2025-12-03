@@ -1,52 +1,39 @@
-// lib/shopify.js
-const SHOPIFY_API_URL = process.env.SHOPIFY_API_URL; // Shopify API URL from environment variables
-const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN; // Shopify Access Token from environment variables
+const URL = process.env.SHOPIFY_API_URL!;
+const TOKEN = process.env.SHOPIFY_ACCESS_TOKEN!;
 
-// Helper function to make requests to Shopify Storefront API
-const fetchShopifyData = async (query) => {
-  const res = await fetch(SHOPIFY_API_URL, {
+async function shopifyFetch<T>(query: string, variables: Record<string, any> = {}) {
+  const res = await fetch(URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_ACCESS_TOKEN,
+      'X-Shopify-Storefront-Access-Token': TOKEN,
     },
-    body: JSON.stringify({
-      query,
-    }),
+    body: JSON.stringify({ query, variables }),
+    next: { revalidate: 60 },
   });
 
-  const data = await res.json();
-  return data.data;
-};
+  const json = await res.json();
+  if (json.errors) throw new Error(JSON.stringify(json.errors));
+  return json.data as T;
+}
 
-// Function to get products from Shopify
-export const getProducts = async () => {
+export async function getProducts(limit = 12) {
   const query = `
-    {
-      products(first: 5) {
+    query ($limit:Int!) {
+      products(first: $limit) {
         edges {
           node {
             id
+            handle
             title
-            descriptionHtml
-            priceRange {
-              minVariantPrice {
-                amount
-              }
-            }
-            images(first: 1) {
-              edges {
-                node {
-                  transformedSrc
-                }
-              }
-            }
+            description
+            priceRange { minVariantPrice { amount currencyCode } }
+            images(first: 1) { edges { node { url altText } } }
           }
         }
       }
     }
   `;
-
-  const data = await fetchShopifyData(query);
-  return data.products.edges; // Return the products data
-};
+  const data = await shopifyFetch<{ products: { edges: any[] } }>(query, { limit });
+  return data.products.edges.map(e => e.node);
+}
