@@ -89,6 +89,7 @@ export default async function Home() {
   };
   
   return (
+  
 	 
     <div style={{ padding: 20 }}>
       <h1>Shopify Products</h1>
