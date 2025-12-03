@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 export default async function Home() {
+	
   const url = process.env.SHOPIFY_API_URL!;
   const token = process.env.SHOPIFY_ACCESS_TOKEN!;
 
@@ -87,16 +88,10 @@ export default async function Home() {
     }).format(parseFloat(amount));
   };
   
-
-  /* const handleLoadMore = () => {
-    if (data.products.pageInfo.hasNextPage && data.products.pageInfo.endCursor) {
-      fetchProducts(data.products.pageInfo.endCursor); // Fetch next set of products using the cursor
-    }
-  }; */
   return (
 	 
     <div style={{ padding: 20 }}>
-      <h1>Shopify Products {data.products.pageInfo.endCursor}</h1>
+      <h1>Shopify Products</h1>
 
       <div
         style={{
@@ -142,7 +137,7 @@ export default async function Home() {
       </div>
 	  
 	 
-     
+       
      
     </div>
   );
