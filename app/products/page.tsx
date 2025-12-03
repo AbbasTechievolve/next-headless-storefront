@@ -1,26 +1,65 @@
-import { getProducts } from '../../lib/shopify';
-export default async function ProductsPage() {
-  const products = await getProducts(12);
+// app/page.tsx
+export const dynamic = "force-dynamic"; // Prevent prerender errors while testing
+
+export default async function Home() {
+  const url = process.env.SHOPIFY_API_URL!;
+  const token = process.env.SHOPIFY_ACCESS_TOKEN!;
+
+  // Query for testing
+  const query = `
+    {
+      shop {
+        name
+      }
+      products(first: 3) {
+        edges {
+          node {
+            id
+            title
+          }
+        }
+      }
+    }
+  `;
+
+  let data: any = null;
+  let error: any = null;
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Storefront-Access-Token": token,
+      },
+      body: JSON.stringify({ query }),
+      cache: "no-store",
+    });
+
+    const result = await res.json();
+
+    if (result.errors) {
+      error = result.errors;
+    } else {
+      data = result.data;
+    }
+  } catch (e: any) {
+    error = e.toString();
+  }
 
   return (
-    <main className="p-6 grid gap-6 md:grid-cols-3">
-      {products.map((p: any) => (
-        <a key={p.id} href={`/products/${p.handle}`} className="border rounded-lg p-4 block">
-          {p.images?.[0]?.url && (
-            <img
-              src={p.images[0].url}
-              alt={p.images[0].altText ?? p.title}
-              className="w-full h-48 object-cover mb-3"
-            />
-          )}
-          <h2 className="font-semibold">{p.title}</h2>
-          <p className="text-sm opacity-70 line-clamp-2">{p.description}</p>
-          <p className="mt-2">
-            {p.priceRange.minVariantPrice.amount} {p.priceRange.minVariantPrice.currencyCode}
-          </p>
-        </a>
-      ))}
-    </main>
+    <div style={{ padding: 20 }}>
+      <h1>Shopify API Test</h1>
+
+      <h2>Environment Check</h2>
+      <pre>{JSON.stringify({
+        hasUrl: Boolean(url),
+        hasToken: Boolean(token),
+        tokenPrefix: token?.slice(0, 6)
+      }, null, 2)}</pre>
+
+      <h2>API Response</h2>
+      <pre>{JSON.stringify(data || error, null, 2)}</pre>
+    </div>
   );
 }
-
