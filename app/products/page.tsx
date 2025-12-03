@@ -1,5 +1,4 @@
 import { getProducts } from '../../lib/shopify';
-
 export default async function ProductsPage() {
   const products = await getProducts(12);
 

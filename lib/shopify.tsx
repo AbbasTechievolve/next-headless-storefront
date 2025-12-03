@@ -1,7 +1,6 @@
 const URL = process.env.SHOPIFY_API_URL!;
 const TOKEN = process.env.SHOPIFY_ACCESS_TOKEN!;
 
-
 async function shopifyFetch<T>(query: string, variables: Record<string, any> = {}) {
   const res = await fetch(URL, {
     method: 'POST',
