@@ -2,8 +2,8 @@
 export const dynamic = "force-dynamic"; // Prevent prerender errors while testing
 
 export default async function Home() {
-  const url = process.env.SHOPIFY_API_URL!;
-  const token = process.env.SHOPIFY_ACCESS_TOKEN!;
+  const url = process.env.SHOPIFY_API_URL;
+  const token = process.env.SHOPIFY_ACCESS_TOKEN;
 
   // Query for testing
   const query = `
