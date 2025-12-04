@@ -1,5 +1,5 @@
-"use client";
-import React from 'react';
+import Link from "next/link";
+
 export default async function Home() {
 	
   const url = process.env.SHOPIFY_API_URL!;
@@ -18,6 +18,7 @@ export default async function Home() {
             node {
               id
               title
+			  handle   
               images(first: 1) {
                 edges {
                   node {
@@ -74,7 +75,7 @@ export default async function Home() {
   };
 
  const { data, error } = await fetchProducts(null);
- console.log('data :',data)
+ console.log("RESULT:", data);
   // If there's no data or error, return a message
   if (!data || error) {
     return <div style={{ padding: 20 }}>Something went wrong: {error}</div>;
@@ -90,7 +91,7 @@ export default async function Home() {
   
   return (
   
-	 
+	
     <div style={{ padding: 20 }}>
       <h1>Shopify Products</h1>
 
@@ -103,6 +104,8 @@ export default async function Home() {
       >
 	  
         {data?.products?.edges.map(({ node }: any) => (
+		 
+		 
           <div
             key={node.id}
             style={{
@@ -119,19 +122,22 @@ export default async function Home() {
             />
             <h3>{node.title}</h3>
             <p>{formatCurrency(node.variants.edges[0].node.priceV2.amount, node.variants.edges[0].node.priceV2.currencyCode)}</p>
-            <button
-			
-              style={{
-                backgroundColor: "#0070f3",
-                color: "white",
-                border: "none",
-                padding: "10px 20px",
-                cursor: "pointer",
-                borderRadius: "5px",
-              }}
-            >
-              Shop Now
-            </button>
+            <Link href={`/products/${node.handle}`} style={{ textDecoration: "none" }}>
+			  <button
+				style={{
+				  backgroundColor: "#0070f3",
+				  color: "white",
+				  border: "none",
+				  padding: "10px 20px",
+				  cursor: "pointer",
+				  borderRadius: "5px",
+				  width: "100%"
+				}}
+			  >
+				Shop Now
+			  </button>
+			</Link>
+
 			
           </div>
         ))}
