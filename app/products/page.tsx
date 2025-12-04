@@ -7,7 +7,7 @@ export default async function Home() {
 
   // GraphQL query to fetch products, images, and prices
     const fetchProducts = async (cursor: string | null) => {
-	console.log('cursor:',cursor)
+	
     const query = `
       {
         shop {
