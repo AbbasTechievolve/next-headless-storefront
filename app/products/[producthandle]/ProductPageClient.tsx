@@ -4,8 +4,9 @@ import { useState } from "react";
 
 export default function ProductPageClient({ product, variants, images }: any) {
   const [selectedVariant, setSelectedVariant] = useState(variants[0]);
+  console.log('selectedVariant',selectedVariant)
 
-  async function addToCart() {
+   async function addToCart() {
     let cartId = localStorage.getItem("cartId");
 
     if (!cartId) {
@@ -15,16 +16,25 @@ export default function ProductPageClient({ product, variants, images }: any) {
       localStorage.setItem("cartId", cartId);
     }
 
-    await fetch("/api/cart/add", {
+    const res2 = await fetch("/api/cart/add", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         cartId,
         variantId: selectedVariant.id,
+        quantity: 1
       }),
     });
+    const cart = await res2.json();
+
+    // Dispatch global events so header and drawer update
+    window.dispatchEvent(new CustomEvent("cart:updated", { detail: cart }));
+    // Optionally open drawer
+    window.dispatchEvent(new CustomEvent("cart:toggle", { detail: { open: true } }));
 
     alert("Added to cart!");
   }
+
 
   return (
     <div style={{ padding: 40 }}>
