@@ -14,6 +14,7 @@ export default function ProductPageClient({ product, variants, images }: any) {
       const json = await res.json();
       cartId = json.id;
       localStorage.setItem("cartId", cartId ?? "");
+	  
     }
 
     const res2 = await fetch("/api/cart/add", {
